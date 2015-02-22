@@ -1,10 +1,5 @@
 # Programming 101 v3
 
-## Course Details
-
-* Starts the first week of March, 2015
-* Problems for application can be found in the `Applications` folder.
-
 ## Course Program
 
 We are going to work with a console & text editor a lot. Linux is a mandatory operating system for this course.
