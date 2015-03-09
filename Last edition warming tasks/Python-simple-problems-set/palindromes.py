@@ -12,6 +12,3 @@ def is_int_palindrome(n):
         return True
     else:
         return False
-
-    
-
