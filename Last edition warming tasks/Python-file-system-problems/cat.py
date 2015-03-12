@@ -1,8 +1,10 @@
-from sys import argv
+import sys
 
-script, filename = argv
+def main():
+    content = open(sys.argv[1], 'r')
+    print(content.read())
 
-content = open(filename, 'r')
-print(content.read())
+    content.close()
 
-content.close()
+if __name__ == '__main__':
+    main()
