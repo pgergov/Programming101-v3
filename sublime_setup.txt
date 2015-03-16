@@ -6,3 +6,7 @@
 	"tab_size": 4,
 
 }
+
+python3.4 to py:
+    subl .bashrc:
+        alias py='python3.4'
