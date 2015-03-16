@@ -1,0 +1,1 @@
+command = input("Enter command>")
