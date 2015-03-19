@@ -51,26 +51,22 @@ def sum_matrix(n):
 
 def find_neighbours(matrix,row,i,j):
     neighbours = []
-    if i - 1 >= 0:
-        if j - 1 >= 0: neighbours.append([i-1,j-1])
-        neighbours.append([i-1,j])
-        if j + 1 <= len(row) - 1: neighbours.append([i-1,j+1])
-    if j - 1 >= 0: neighbours.append([i,j-1])
-    if j + 1 <= len(row) - 1: neighbours.append([i,j+1])
-    if i + 1 <= len(matrix) - 1:
-        if j - 1 >= 0: neighbours.append([i+1,j-1])
-        neighbours.append([i+1,j])
-        if j + 1 <= len(row) - 1: neighbours.append([i+1,j+1])
+    indexes = [-1, 0, 1]
+    for r in indexes:
+        for c in indexes:
+            if i+r >= 0 and i+r <= len(matrix) - 1 and j+c >= 0 and j+c <= len(row) - 1:
+                if not (r == 0 and c == 0):
+                    neighbours.append([i+r, j+c])
     return neighbours
 
 def bomb_matrix(matrix,row,i,j):
-    result = deepcopy(matrix)
+    bombed_matrix = deepcopy(matrix)
     for element in find_neighbours(matrix, row, i,j):
         if matrix[element[0]][element[1]] - matrix[i][j] >= 0:
-            result[element[0]][element[1]] = matrix[element[0]][element[1]] - matrix[i][j]
+            bombed_matrix[element[0]][element[1]] = matrix[element[0]][element[1]] - matrix[i][j]
         else:
-            result[element[0]][element[1]] = 0
-    return result
+            bombed_matrix[element[0]][element[1]] = 0
+    return bombed_matrix
 
 def matrix_bombing_plan(matrix):
     result = {}
