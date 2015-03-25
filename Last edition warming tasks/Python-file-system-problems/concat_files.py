@@ -1,17 +1,25 @@
 import sys
-import os 
+import os
+
+
+def concat_files():
+    result = []
+    for i in range(1, len(sys.argv)):
+        with open(sys.argv[i], 'r') as f:
+            content = f.read() + "\n"
+            result.append(content)
+
+    try:
+        with open("MEGATRON.txt", 'a') as text:
+            if os.stat("MEGATRON.txt").st_size > 0:
+                text.write("\n")
+            text.write("\n".join(result))
+    finally:
+        text.close()
+
 
 def main():
-    f = open(sys.argv[1], 'a')
-    for i in range(2, len(sys.argv)):
-        if os.stat(sys.argv[1]).st_size != 0:
-            f.write("\n")
-        content = open(sys.argv[i], 'r')
-        f.write(content.read() + "\n")
-        content.close()
-        if i + 1 < int(len(sys.argv)) and os.stat(sys.argv[1]).st_size == 0:
-            f.write("\n")
-    f.close()
+    concat_files()
 
 if __name__ == '__main__':
     main()

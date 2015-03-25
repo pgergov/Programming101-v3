@@ -1,17 +1,18 @@
 import sys
 from random import randint
 
-def main():
-    f = open(sys.argv[1], 'w')
-    for i in range(int(sys.argv[2])):
-        f.write(str(randint(1,1000)))
-        if i + 1 < int(sys.argv[2]):
-            f.write(" ")
-    f.close()
 
-    f = open(sys.argv[1], 'r')
-    print(f.read())
-    f.close()
+def generate_numbers():
+    numbs = []
+    for i in range(int(sys.argv[2])):
+        numbs.append(str(randint(1, 1000)))
+
+    with open(sys.argv[1], 'w') as f:
+        f.write(" ".join(numbs))
+
+
+def main():
+    generate_numbers()
 
 if __name__ == '__main__':
     main()
