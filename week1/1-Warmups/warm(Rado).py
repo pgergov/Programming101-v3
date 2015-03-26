@@ -1,8 +1,7 @@
 def factorial(n):
-    fact = 1
-    for i in range(1, n+1):
-        fact *= i
-    return fact
+    factorial(0) = 1
+    return n*factorial(n-1)
+print(factorial(2))
 
 def nth_fibonacci(n):
     result = []
