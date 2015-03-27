@@ -4,7 +4,7 @@ class Bill:
         self.amount = amount
 
     def __str__(self):
-        return "A {}$ bill".format(self.amount)
+        return "{}$ bill".format(self.amount)
 
     def __repr__(self):
         return self.__str__()
@@ -31,7 +31,7 @@ class BatchBill:
     def __len__(self):
         return len(self.bills)
 
-    # Когато обхождаме клас с for се извиква getitem__, но е нужда да има и len
+# Когато обхождаме клас с for се извиква getitem, но е нужно да има и __len__
     def __getitem__(self, index):
         return self.bills[index]
 
@@ -68,7 +68,7 @@ class CashDesk:
     def inspect(self):
         return self.bank
 
-values = [10, 20, 50, 100]
+values = [10, 20, 50, 100, 100, 100]
 bills = [Bill(value) for value in values]
 
 batch = BatchBill(bills)
