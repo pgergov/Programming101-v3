@@ -1,9 +1,10 @@
 class Entity():
 
-    def __init__(self, name, health):
+    def __init__(self, name, health,):
         self.name = name
         self.health = health
         self.max_health = health
+        self.weapon = None
 
     def is_alive(self):
         return self.health > 0
@@ -23,3 +24,16 @@ class Entity():
                 self.health = self.max_health
             return True
         return False
+
+    def has_weapon(self):
+        return self.weapon is not None
+
+    def equip_weapon(self, weapon):
+        self.weapon = weapon
+
+    def attack(self):
+        if self.has_weapon():
+            if self.weapon.critical_hit():
+                return self.weapon.damage * 2
+            return self.weapon.damage
+        return 0
