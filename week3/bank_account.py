@@ -22,6 +22,8 @@ class BankAccount():
         return self.__name
 
     def get_balance(self):
+        self.__history.append("Balance check -> {}{}".format(
+            self.__balance, self.__currency))
         return self.__balance
 
     def get_currency(self):
@@ -38,19 +40,24 @@ class BankAccount():
         return self.__str__()
 
     def __int__(self):
-        return self.get_balance()
+        self.__history.append("__int__ check -> {}{}".format(
+            self.__balance, self.__currency))
+        return self.__balance
 
-    def deposit(self, ammount):
-        self.__balance += ammount
+    def deposit(self, amount):
+        self.__balance += amount
         self.__history.append("Deposited {}{}".format(
-            self.get_balance(), self.get_currency()))
+            amount, self.__currency))
 
     def withdraw(self, amount):
         if amount % 10 != 0:
             raise ValueError("Enter amount that is multiple by 10.")
         if amount > 0 and self.__balance >= amount:
             self.__balance -= amount
+            self.__history.append("{}{} was withdrawed".format(
+                amount, self.__currency))
             return True
+        self.__history.append("Withdraw for {}{} failed.".format(amount, self.__currency))
         return False
 
     def transfer_to(self, account, amount):

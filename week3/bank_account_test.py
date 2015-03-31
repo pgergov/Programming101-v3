@@ -59,9 +59,14 @@ class BankAccountTest(unittest.TestCase):
     def test_history_of_account_that_is_just_created(self):
         self.assertEqual(["Account was created"], self.account.history())
 
-    def test_history_after_deposit(self):
+    def test_history_after_some_actions(self):
         self.account.deposit(20)
-        self.assertEqual(["Account was created", "Deposited 30BGN"], self.account.history())
+        self.account.get_balance()
+        int(self.account)
+        self.account.withdraw(20)
+        self.account.get_balance()
+        self.account.withdraw(50)
+        self.assertEqual(['Account was created', 'Deposited 20BGN', 'Balance check -> 30BGN', '__int__ check -> 30BGN', '20BGN was withdrawed', 'Balance check -> 10BGN', 'Withdraw for 50BGN failed.'], self.account.history())
 
 if __name__ == '__main__':
     unittest.main()
