@@ -4,6 +4,8 @@ from orc import Orc
 
 class Dungeon():
 
+    players = []
+
     def __init__(self, dungeon):
         self.dungeon = dungeon
 
@@ -12,18 +14,20 @@ class Dungeon():
             print(f.read())
 
     def change_map(self, char):
-        new_content = ""
         with open(self.dungeon, 'r') as f:
             content = f.read()
-            for i in range(len(content)):
-                if i == content.index("S"):
-                    new_content += char
-                else:
-                    new_content += content[i]
+        if content.index("S") == 0:
+            content = char + content[1:]
+        elif content.index("S") == len(content) - 1:
+            content = content[:len(content) - 1] + char
+        else:
+            content = content[:content.index("S")] + char
+            + content[content.index("S") + 1:]
         with open(self.dungeon, 'w') as f:
-            f.write(new_content)
+            f.write(content)
 
     def spawn(self, player_name, entity):
+        Dungeon.players.append(player_name)
         if isinstance(entity, Hero):
             char = "H"
         elif isinstance(entity, Orc):
@@ -36,3 +40,6 @@ class Dungeon():
         except:
             return False
         return True
+
+def move(player_name, direction):
+    pass
