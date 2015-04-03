@@ -1,6 +1,5 @@
 import unittest
 from cash_desk import Bill
-# в unittest имаме клас TestCase, в него са дефинирани методите за сравняване
 
 
 class CashDeskTest(unittest.TestCase):
