@@ -1,18 +1,24 @@
-class Panda():
+import re
 
+
+class Panda():
     def __init__(self, name, email, gender):
 
         if not isinstance(name, str):
-            raise TypeError
+            raise TypeError("Enter a valid name represented as a string.")
 
         if not isinstance(email, str):
-            raise TypeError
+            raise TypeError("Enter a valid email represented as a string")
 
         if not isinstance(gender, str):
-            raise TypeError
+            raise TypeError("We accept only pandas in our community!")
 
         if gender != "male" and gender != "female":
-            raise ValueError("You are not human!")
+            raise ValueError("You are not normal!")
+
+        if not re.match(
+                r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
+            raise Exception("Enter a valid email.")
 
         self.__name = name
         self.__email = email
@@ -38,7 +44,8 @@ class Panda():
             self.__name, self.__gender)
 
     def __repr__(self):
-        return self.__name
+        return "Panda('{}', '{}', '{}')".format(
+            self.__name, self.__email, self.__gender)
 
     def __hash__(self):
         return hash(self.name())
