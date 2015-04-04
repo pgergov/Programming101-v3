@@ -14,7 +14,7 @@ class Panda():
             raise TypeError("We accept only pandas in our community!")
 
         if gender != "male" and gender != "female":
-            raise ValueError("You are not normal!")
+            raise ValueError("Enter a valid gender (male or female).")
 
         if not re.match(
                 r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
