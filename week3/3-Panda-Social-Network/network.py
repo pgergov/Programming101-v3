@@ -1,12 +1,12 @@
 from panda import Panda
+import json
 
 
 class PandaSocialNetwork():
-
     def __init__(self):
         self.__pandas = {}
 
-    def pandas(self):
+    def get_pandas(self):
         return self.__pandas
 
     def has_panda(self, other):
@@ -17,13 +17,12 @@ class PandaSocialNetwork():
             if not self.has_panda(other):
                 self.__pandas[other] = []
             else:
-                raise Exception("Name is already taken")
+                raise Exception("Name is already taken.")
         else:
             raise TypeError("Give me a real panda!")
 
     def are_friends(self, panda1, panda2):
-        return panda1 in self.__pandas[panda2] \
-                    and panda2 in self.__pandas[panda1]
+        return panda1 in self.__pandas[panda2] and panda2 in self.__pandas[panda1]
 
     def make_friends(self, panda1, panda2):
         if not self.has_panda(panda1):
@@ -37,34 +36,29 @@ class PandaSocialNetwork():
 
     def friends_of(self, panda):
         if self.has_panda(panda):
-            return self.__pandas[panda]
+            return [panda.name() for panda in self.__pandas[panda]]
         return False
 
-    def search_for_friends(self, panda1, panda2):
-        level = 1
-        friends = [1, 0]
-        visited = []
-        que = [panda1]
-        while len(que) != 0:
-            current = que.pop(0)
-            if current not in visited:
-                visited.append(current)
-                if panda2 in self.__pandas[current]:
-                    return level
-                else:
-                    friends[level - 1] -= 1
-                for panda in self.__pandas[current]:
-                    if panda not in visited:
-                        friends[level] += 1
-                        que.append(panda)
-                if friends[level - 1] == 0:
-                    level += 1
-                    friends.append(0)
+    def search_for_friends(self, start, end, path=[]):
+        path = path + [start]
+        if start == end:
+            return path
+        if not self.has_panda(start) or not self.has_panda(end):
+            return False
+        shortest = None
+        for node in self.__pandas[start]:
+            if node not in path:
+                newpath = self.search_for_friends(node, end, path)
+                if newpath:
+                    if not shortest or len(newpath) < len(shortest):
+                        shortest = newpath
+        if shortest is not None:
+            return shortest
         return -1
 
     def connection_level(self, panda1, panda2):
-        if not self.has_panda(panda1) or not self.has_panda(panda2):
-            return False
+        if self.search_for_friends(panda1, panda2) not in [False, -1]:
+            return len(self.search_for_friends(panda1, panda2)) - 1
         return self.search_for_friends(panda1, panda2)
 
     def are_connected(self, panda1, panda2):
@@ -72,26 +66,54 @@ class PandaSocialNetwork():
 
     def how_many_gender_in_network(self, search_level, panda, gender):
         if search_level < 1:
-            raise ValueError("Enter level greater or equal to 1.")
-        level = 1
-        friends = [1, 0]
-        visited = []
-        que = [panda]
-        counter = 0
-        while len(que) != 0:
-            current = que.pop(0)
-            if current not in visited:
-                visited.append(current)
-                friends[level - 1] -= 1
-                for panda in self.__pandas[current]:
-                    if panda not in visited:
-                        friends[level] += 1
-                        que.append(panda)
-                        if panda.gender() == gender:
-                            counter += 1
-                if friends[level - 1] == 0:
-                    if level == search_level:
-                        return counter
-                    level += 1
-                    friends.append(0)
+            raise Exception("Enter level greater or equal to 1.")
+        if gender != "male" and gender != "female":
+            raise Exception("Your gender must be male or female.")
+        counter, level = 0, 1
+        visited = [panda]
+        friends = [frnd for frnd in self.__pandas[panda]]
+        while level <= search_level:
+            for friend in friends:
+                if friend not in visited:
+                    visited.append(friend)
+                    if friend.gender() == gender:
+                        counter += 1
+            friends = [
+                frnd for panda in friends for frnd in self.__pandas[panda]]
+            level += 1
         return counter
+
+    def get_members(self):
+        return [panda for panda in self.__pandas]
+
+    def save_members(self, file_name):
+        members = {}
+        for member in self.get_members():
+            members[member.name()] = member.__dict__
+        json_members = json.dumps(members)
+        with open(file_name, "w") as f:
+            f.write(json_members)
+
+    def load_members(self, members_file):
+        with open(members_file, "r") as f:
+            self.members = json.load(f)
+        for panda in self.members:
+            self.add_panda(Panda(self.members[panda]['_Panda__name'], self.members[panda]['_Panda__email'], self.members[panda]['_Panda__gender']))
+
+    def save_friends(self, file_name):
+        friends = {}
+        for panda in self.get_pandas():
+            friends[panda.name()] = self.friends_of(panda)
+        json_friends = json.dumps(friends)
+        with open(file_name, "w") as f:
+            f.write(json_friends)
+
+    def load_friends(self, friends_file):
+        with open(friends_file, "r") as f:
+            self.friends = json.load(f)
+        for panda in self.friends:
+            for friend in self.friends[panda]:
+                pand = Panda(self.members[panda]['_Panda__name'], self.members[panda]['_Panda__email'], self.members[panda]['_Panda__gender'])
+                pand_fr = Panda(self.members[friend]['_Panda__name'], self.members[friend]['_Panda__email'], self.members[friend]['_Panda__gender'])
+                if not self.are_friends(pand, pand_fr):
+                    self.make_friends(pand, pand_fr)
