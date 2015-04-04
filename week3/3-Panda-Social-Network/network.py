@@ -22,7 +22,8 @@ class PandaSocialNetwork():
             raise TypeError("Give me a real panda!")
 
     def are_friends(self, panda1, panda2):
-        return panda1 in self.__pandas[panda2] and panda2 in self.__pandas[panda1]
+        return panda1 in self.__pandas[panda2] and \
+            panda2 in self.__pandas[panda1]
 
     def make_friends(self, panda1, panda2):
         if not self.has_panda(panda1):
@@ -86,29 +87,25 @@ class PandaSocialNetwork():
     def get_members(self):
         return [panda for panda in self.__pandas]
 
-    def save_members(self, file_name):
+    def save(self, members_file, friends_file):
         members = {}
         for member in self.get_members():
             members[member.name()] = member.__dict__
-        json_members = json.dumps(members)
-        with open(file_name, "w") as f:
-            f.write(json_members)
+        with open(members_file, "w") as f:
+            f.write(json.dumps(members))
 
-    def load_members(self, members_file):
+        friends = {}
+        for panda in self.get_pandas():
+            friends[panda.name()] = self.friends_of(panda)
+        with open(friends_file, "w") as f:
+            f.write(json.dumps(friends))
+
+    def load(self, members_file, friends_file):
         with open(members_file, "r") as f:
             self.members = json.load(f)
         for panda in self.members:
             self.add_panda(Panda(self.members[panda]['_Panda__name'], self.members[panda]['_Panda__email'], self.members[panda]['_Panda__gender']))
 
-    def save_friends(self, file_name):
-        friends = {}
-        for panda in self.get_pandas():
-            friends[panda.name()] = self.friends_of(panda)
-        json_friends = json.dumps(friends)
-        with open(file_name, "w") as f:
-            f.write(json_friends)
-
-    def load_friends(self, friends_file):
         with open(friends_file, "r") as f:
             self.friends = json.load(f)
         for panda in self.friends:
