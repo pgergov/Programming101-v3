@@ -1,1 +1,1 @@
-{"Joro": {"_Panda__gender": "male", "_Panda__name": "Joro", "_Panda__email": "joro_vr@abv.bg"}, "Gosho": {"_Panda__gender": "male", "_Panda__name": "Gosho", "_Panda__email": "gosho@abv.bg"}}
+{"Joro": {"_Panda__gender": "male", "_Panda__email": "joro_vr@abv.bg", "_Panda__name": "Joro"}, "Gosho": {"_Panda__gender": "male", "_Panda__email": "gosho@abv.bg", "_Panda__name": "Gosho"}}
