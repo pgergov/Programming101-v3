@@ -127,12 +127,10 @@ class PandaNetworkTest(unittest.TestCase):
 
     def test_pandabook_save_and_load_capabilities(self):
         self.network.make_friends(self.panda, self.other_panda)
-        self.network.save_members("members_test.txt")
-        self.network.save_friends("friends_test.txt")
+        self.network.save("members_test.txt", "friends_test.txt")
 
         pandabook = PandaSocialNetwork()
-        pandabook.load_members("members_test.txt")
-        pandabook.load_friends("friends_test.txt")
+        pandabook.load("members_test.txt", "friends_test.txt")
 
         self.assertEqual(self.network.get_pandas(), pandabook.get_pandas())
 
