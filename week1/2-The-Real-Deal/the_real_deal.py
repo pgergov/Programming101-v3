@@ -55,7 +55,8 @@ def zero_insert(n):
         if n[i] == n[i+1] or (n[i] + n[i+1]) % 10 == 0:
             n.insert(i+1, 0)
         i += 1
-    return n
+    n = [str(x) for x in n]
+    return int("".join(n))
 
 
 def sum_matrix(n):
@@ -67,7 +68,8 @@ def find_neighbours(matrix, row, i, j):
     indexes = [-1, 0, 1]
     for r in indexes:
         for c in indexes:
-            if i + r >= 0 and i + r <= len(matrix) - 1 and j + c >= 0 and j + c <= len(row) - 1:
+            if i + r >= 0 and i + r <= len(matrix) - 1 \
+                    and j + c >= 0 and j + c <= len(row) - 1:
                 if not (r == 0 and c == 0):
                     neighbours.append([i + r, j + c])
     return neighbours
@@ -77,7 +79,8 @@ def bomb_matrix(matrix, row, i, j):
     bombed_matrix = deepcopy(matrix)
     for element in find_neighbours(matrix, row, i, j):
         if matrix[element[0]][element[1]] - matrix[i][j] >= 0:
-            bombed_matrix[element[0]][element[1]] = matrix[element[0]][element[1]] - matrix[i][j]
+            bombed_matrix[element[0]][element[1]] = \
+                matrix[element[0]][element[1]] - matrix[i][j]
         else:
             bombed_matrix[element[0]][element[1]] = 0
     return bombed_matrix
