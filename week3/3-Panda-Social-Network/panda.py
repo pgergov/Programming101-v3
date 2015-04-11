@@ -2,6 +2,7 @@ import re
 
 
 class Panda():
+
     def __init__(self, name, email, gender):
 
         if not isinstance(name, str):
@@ -23,15 +24,6 @@ class Panda():
         self.name = name
         self.email = email
         self.gender = gender
-
-    # def name(self):
-    #     return self.name
-
-    # def email(self):
-    #     return self.__email
-
-    # def gender(self):
-    #     return self.gender
 
     def isMale(self):
         return self.gender == "male"
