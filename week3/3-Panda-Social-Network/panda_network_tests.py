@@ -57,7 +57,7 @@ class PandaNetworkTest(unittest.TestCase):
     def test_panda_make_friends(self):
         self.network.make_friends(self.panda, self.other_panda)
         self.assertEqual(self.network.friends_of(
-            self.panda), [self.other_panda.name()])
+            self.panda), [self.other_panda])
 
     def test_connection_between_direct_panda_friends(self):
         self.network.make_friends(self.panda, self.other_panda)
@@ -125,13 +125,11 @@ class PandaNetworkTest(unittest.TestCase):
         self.assertEqual(2, self.network.how_many_gender_in_network(
             5, ani, "male"))
 
-    def test_pandabook_save_and_load_capabilities(self):
+    def test_save_and_load_functionality(self):
         self.network.make_friends(self.panda, self.other_panda)
-        self.network.save("members_test.txt", "friends_test.txt")
-
+        self.network.save("save_load_test.json")
         pandabook = PandaSocialNetwork()
-        pandabook.load("members_test.txt", "friends_test.txt")
-
+        pandabook.load("save_load_test.json")
         self.assertEqual(self.network.get_pandas(), pandabook.get_pandas())
 
 if __name__ == '__main__':

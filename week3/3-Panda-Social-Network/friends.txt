@@ -1,1 +1,0 @@
-{"gosho": [], "pavli": ["rado"], "rado": ["pavli", "ivo"], "ivo": ["rado"], "ani": []}

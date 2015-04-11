@@ -1,1 +1,0 @@
-{"Joro": ["Gosho"], "Gosho": ["Joro"]}

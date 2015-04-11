@@ -1,0 +1,30 @@
+{
+ "Gosho, male panda": {
+  "info": {
+   "name": "Gosho",
+   "email": "gosho@abv.bg",
+   "gender": "male"
+  },
+  "friends": [
+   {
+    "name": "Joro",
+    "email": "joro_vr@abv.bg",
+    "gender": "male"
+   }
+  ]
+ },
+ "Joro, male panda": {
+  "info": {
+   "name": "Joro",
+   "email": "joro_vr@abv.bg",
+   "gender": "male"
+  },
+  "friends": [
+   {
+    "name": "Gosho",
+    "email": "gosho@abv.bg",
+    "gender": "male"
+   }
+  ]
+ }
+}
