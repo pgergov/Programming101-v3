@@ -1,13 +1,20 @@
 class Bill:
 
     def __init__(self, amount):
+
+        if not isinstance(amount, int):
+            raise TypeError
+
+        if amount < 0:
+            raise ValueError
+
         self.amount = amount
 
     def __str__(self):
-        return "{}$ bill".format(self.amount)
+        return "A {}$ bill".format(self.amount)
 
     def __repr__(self):
-        return self.__str__()
+        return "{}$ bills".format(self.amount)
 
     def __int__(self):
         return self.amount
@@ -18,6 +25,9 @@ class Bill:
     def __hash__(self):
         return hash(str(self.amount))
 
+    def __lt__(self, other):
+        return int(self) < int(other)
+
 
 class BatchBill:
 
@@ -25,7 +35,7 @@ class BatchBill:
         self.bills = bills
 
     def total(self):
-        return sum([int(bill) for bill in bills])
+        return sum([int(bill) for bill in self.bills])
 
     # len() върху инстанцията извиква __len__
     def __len__(self):
@@ -43,40 +53,26 @@ class CashDesk:
         self.bank = {}
 
     def add_in_bank(self, money):
-        if isinstance(money, Bill):
-            if money in self.bank:
-                self.bank[money] += 1
-            else:
-                self.bank[money] = 1
-        elif isinstance(money, BatchBill):
-            for bill in money:
-                if bill in self.bank:
-                    self.bank[bill] += 1
-                else:
-                    self.bank[bill] = 1
+        if money in self.bank:
+            self.bank[money] += 1
+        else:
+            self.bank[money] = 1
 
     def take_money(self, money):
-        self.add_in_bank(money)
         if isinstance(money, Bill):
             self.gold += int(money)
+            self.add_in_bank(money)
         elif isinstance(money, BatchBill):
             self.gold += money.total()
+            for bill in money:
+                self.add_in_bank(bill)
 
     def total(self):
-        return self.gold
+        return "We have a total of {}$ in the bank".format(self.gold)
 
     def inspect(self):
-        return self.bank
-
-values = [10, 20, 50, 100, 100, 100]
-bills = [Bill(value) for value in values]
-
-batch = BatchBill(bills)
-
-desk = CashDesk()
-
-desk.take_money(batch)
-desk.take_money(Bill(10))
-
-print(desk.total())
-print(desk.inspect())
+        sorted_bills = sorted(self.bank)
+        print("We have the following count of bills,\
+ sorted in ascending order:")
+        for bill in sorted_bills:
+            print("{} - {}".format(repr(bill), self.bank[bill]))
