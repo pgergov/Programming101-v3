@@ -22,25 +22,17 @@ class Fraction:
 
     def __add__(self, other):
         down = self.d * other.d
-        up = int(self.n * (down / self.d) + other.n * (down / other.d))
+        up = self.n * (down // self.d) + other.n * (down // other.d)
         return Fraction(self.reducer(up, down)[0], self.reducer(up, down)[1])
 
     def __sub__(self, other):
         down = self.d * other.d
         up = int(self.n * (down / self.d) - other.n * (down / other.d))
-        if up == 0: return 0
+        if up == 0:
+            return 0
         return Fraction(self.reducer(up, down)[0], self.reducer(up, down)[1])
 
     def __mul__(self, other):
         up = self.n * other.n
         down = self.d * other.d
         return Fraction(self.reducer(up, down)[0], self.reducer(up, down)[1])
-
-a = Fraction(1, 2)
-b = Fraction(2, 4)
-
-print(a == b)
-
-print(a + b)
-print(a - b)
-print(a * b)
