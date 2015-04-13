@@ -10,7 +10,7 @@ class MusicPlayerTest(unittest.TestCase):
 
     def test_str(self):
         self.assertEqual(str(
-            self.song), "Manowar - Odin(The Sons of Odin) : 3:44")
+            self.song), "Manowar - Odin (The Sons of Odin) : 3:44")
 
     def test_adding_song_in_playlist(self):
         self.playlist.add_song(self.song)
@@ -75,9 +75,14 @@ class MusicPlayerTest(unittest.TestCase):
         self.assertEqual(g.name, "The sex and the city")
 
     def test_crawler_generate_ability(self):
-        crawler = MusicCrawler("/home/hdimitrova/Music/")
-        playlist = crawler.generate_playlist("Mега як плейлист")
-        print(playlist.songs)
+        crawler = MusicCrawler("/home/hdimitrova/Music/Linkin Park - Meteora")
+        playlist = crawler.generate_playlist("Meteora")
+        self.assertEqual(playlist.total_length(), '0:36:41')
+
+    def test_crawlered_playlist_save(self):
+        crawler = MusicCrawler("/home/hdimitrova/Music/Linkin Park - Meteora")
+        playlist = crawler.generate_playlist("Linkin Park - Meteora")
+        playlist.save()
 
 if __name__ == '__main__':
     unittest.main()

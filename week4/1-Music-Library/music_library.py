@@ -23,35 +23,36 @@ class Song:
     def album(self):
         return self.__album
 
-    def to_seconds(self):
-        if len(self.time) == 2:
-            return self.time[0]*60 + self.time[1]
-        return self.time[0]*3600 + self.time[1]*60 + self.time[2]
+    def to_seconds(self, time):
+        if len(time) == 2:
+            return time[0]*60 + time[1]
+        return time[0]*3600 + time[1]*60 + time[2]
 
-    def to_minutes(self):
-        if len(self.time) == 2:
-            return self.time[0] + self.time[1]
-        return self.time[0]*60 + self.time[1]
+    def to_minutes(self, time):
+        if len(time) == 2:
+            return time[0] + time[1]
+        return time[0]*60 + time[1]
 
-    def to_hours(self):
-        if len(self.time) == 3:
-            if self.time[1] >= 60:
-                return self.time[0] + 1
-            return self.time[0]
+    def to_hours(self, time):
+        if len(time) == 3:
+            if time[1] >= 60:
+                return time[0] + 1
+            return time[0]
         return 0
 
     def length(self, seconds=False, minutes=False, hours=False):
-        self.time = [int(x.strip()) for x in self.__length.split(":")]
+        if seconds or minutes or hours:
+            time = [int(x.strip()) for x in self.__length.split(":")]
         if seconds:
-            return self.to_seconds()
+            return self.to_seconds(time)
         elif minutes:
-            return self.to_minutes()
+            return self.to_minutes(time)
         elif hours:
-            return self.to_hours()
+            return self.to_hours(time)
         return self.__length
 
     def __str__(self):
-        return "{} - {}({}) : {}".format(
+        return "{} - {} ({}) : {}".format(
             self.artist(), self.title(), self.album(), self.length())
 
     def __repr__(self):
@@ -74,6 +75,7 @@ class Playlist:
         self.repeat = repeat
         self.shuffle = shuffle
         self.songs = []
+        self.songs_location = {}
         self.fresh_playlist = True
         self.current_song = None
         self.played_songs = set()
@@ -89,6 +91,9 @@ class Playlist:
             self.songs.append(song)
         else:
             raise TypeError("The song in not instance of class Song")
+
+    def add_location(self, song, location):
+        self.songs_location[song] = location
 
     def remove_song(self, song):
         if self.has_song(song):
@@ -194,9 +199,10 @@ class MusicCrawler:
         playlist = Playlist(name)
         songs = [mp3 for mp3 in os.listdir(self.path) if mp3.endswith(".mp3")]
         for song in songs:
-            data = mutagen.File(self.path + song)
+            data = mutagen.File(self.path + "/" + song)
             song_data = self.get_data(data)
             new_song = Song(
                 artist=song_data["artist"], title=song_data["title"], album=song_data["album"], length=song_data["length"])
             playlist.add_song(new_song)
+            playlist.add_location(new_song, self.path + "/" + song)
         return playlist
