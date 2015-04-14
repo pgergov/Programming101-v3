@@ -1,17 +1,17 @@
 {
+ "name": "The sex and the city",
  "songs": [
   {
-   "_Song__length": "3:44",
-   "_Song__album": "The Sons of Odin",
-   "_Song__title": "Odin",
-   "_Song__artist": "Manowar"
+   "album": "The Sons of Odin",
+   "artist": "Manowar",
+   "title": "Odin",
+   "length": "3:44"
   },
   {
-   "_Song__length": "3:50",
-   "_Song__album": "Gay Album",
-   "_Song__title": "Baby",
-   "_Song__artist": "J.Beiber"
+   "album": "Gay Album",
+   "artist": "J.Beiber",
+   "title": "Baby",
+   "length": "3:50"
   }
- ],
- "name": "The sex and the city"
+ ]
 }
