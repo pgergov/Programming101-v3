@@ -9,19 +9,19 @@ import os
 class Song:
 
     def __init__(self, title, artist, album, length):
-        self.__title = title
-        self.__artist = artist
-        self.__album = album
-        self.__length = length
+        self.title = title
+        self.artist = artist
+        self.album = album
+        self.length = length
 
-    def title(self):
-        return self.__title
+    def get_title(self):
+        return self.title
 
-    def artist(self):
-        return self.__artist
+    def get_artist(self):
+        return self.artist
 
-    def album(self):
-        return self.__album
+    def get_album(self):
+        return self.album
 
     def to_seconds(self, time):
         if len(time) == 2:
@@ -40,29 +40,29 @@ class Song:
             return time[0]
         return 0
 
-    def length(self, seconds=False, minutes=False, hours=False):
+    def get_length(self, seconds=False, minutes=False, hours=False):
         if seconds or minutes or hours:
-            time = [int(x.strip()) for x in self.__length.split(":")]
+            time = [int(x.strip()) for x in self.length.split(":")]
         if seconds:
             return self.to_seconds(time)
         elif minutes:
             return self.to_minutes(time)
         elif hours:
             return self.to_hours(time)
-        return self.__length
+        return self.length
 
     def __str__(self):
         return "{} - {} ({}) : {}".format(
-            self.artist(), self.title(), self.album(), self.length())
+            self.artist, self.title, self.album, self.length)
 
     def __repr__(self):
         return self.__str__()
 
     def __eq__(self, other):
-        return self.title() == other.title() and \
-               self.artist() == other.artist() and \
-               self.album() == other.album() and \
-               self.length() == other.length()
+        return self.get_title() == other.get_title() and \
+               self.get_artist() == other.get_artist() and \
+               self.get_album() == other.get_album() and \
+               self.get_length() == other.get_length()
 
     def __hash__(self):
         return hash(self.__str__())
@@ -104,16 +104,16 @@ class Playlist:
             self.add_song(song)
 
     def total_length(self):
-        total_seconds = sum([song.length(seconds=True) for song in self.songs])
+        total_seconds = sum([song.get_length(seconds=True) for song in self.songs])
         return str(datetime.timedelta(seconds=total_seconds))
 
     def artists(self):
         result = {}
         for song in self.songs:
-            if song.artist() in result:
-                result[song.artist()] += 1
+            if song.get_artist() in result:
+                result[song.get_artist()] += 1
             else:
-                result[song.artist()] = 1
+                result[song.get_artist()] = 1
         return result
 
     def next_song(self):
@@ -142,12 +142,11 @@ class Playlist:
     def pprint_playlist(self):
         table = PrettyTable(["Artist", "Song", "Length"])
         for song in self.songs:
-            table.add_row([song.artist(), song.title(), song.length()])
+            table.add_row([song.get_artist(), song.get_title(), song.get_length()])
         print(table)
 
     def generate_json_name(self):
-        dasherized_name = self.name.replace(" ", "-") + ".json"
-        return dasherized_name
+        return self.name.replace(" ", "-") + ".json"
 
     def save(self):
         data = {
@@ -164,7 +163,7 @@ class Playlist:
             playlist = Playlist(content["name"])
             for song in content["songs"]:
                 new_song = Song(
-                    artist=song["_Song__artist"], title=song["_Song__title"], album=song["_Song__album"], length=song["_Song__length"])
+                    artist=song["artist"], title=song["title"], album=song["album"], length=song["length"])
                 playlist.add_song(new_song)
             return playlist
 
@@ -174,7 +173,7 @@ class MusicCrawler:
     def __init__(self, path):
         self.path = path
 
-    def get_data(self, data):
+    def get_info(self, data):
         song_data = {}
         try:
             song_data["artist"] = data["TPE1"].text[0]
@@ -200,9 +199,9 @@ class MusicCrawler:
         songs = [mp3 for mp3 in os.listdir(self.path) if mp3.endswith(".mp3")]
         for song in songs:
             data = mutagen.File(self.path + "/" + song)
-            song_data = self.get_data(data)
+            info = self.get_info(data)
             new_song = Song(
-                artist=song_data["artist"], title=song_data["title"], album=song_data["album"], length=song_data["length"])
+                artist=info["artist"], title=info["title"], album=info["album"], length=info["length"])
             playlist.add_song(new_song)
             playlist.add_location(new_song, self.path + "/" + song)
         return playlist

@@ -83,6 +83,7 @@ class MusicPlayerTest(unittest.TestCase):
         crawler = MusicCrawler("/home/hdimitrova/Music/Linkin Park - Meteora")
         playlist = crawler.generate_playlist("Linkin Park - Meteora")
         playlist.save()
+        playlist.pprint_playlist()
 
 if __name__ == '__main__':
     unittest.main()
