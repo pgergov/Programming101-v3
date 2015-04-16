@@ -5,6 +5,9 @@ class Enemy(Soldier):
 
     def __init__(self, health, mana, damage):
         super().__init__(health, mana)
+        if not isinstance(damage, int):
+            raise TypeError("Damage must be integer")
+
         self.damage = damage
 
     def __str__(self):
