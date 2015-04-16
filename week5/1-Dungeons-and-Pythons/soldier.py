@@ -1,6 +1,12 @@
 class Soldier:
 
     def __init__(self, health, mana):
+        if not isinstance(health, int):
+            raise TypeError("Health must be integer")
+
+        if not isinstance(mana, int):
+            raise TypeError("Mana must be integer")
+
         self.health = health
         self.mana = mana
         self.__max_hp = health

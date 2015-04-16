@@ -5,6 +5,14 @@ class Hero(Soldier):
 
     def __init__(self, name, title, health, mana, mana_regeneration_rate):
         super().__init__(health, mana)
+        if not isinstance(name, str):
+            raise TypeError("Name must be string")
+
+        if not isinstance(title, str):
+            raise TypeError("Title must me string")
+
+        if not isinstance(mana_regeneration_rate, int):
+            raise TypeError("Mana_regeneration_rate must be integer")
         self.name = name
         self.title = title
         self.mana_regeneration_rate = mana_regeneration_rate

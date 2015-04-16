@@ -1,10 +1,10 @@
 class Weapon:
     def __init__(self, name, damage):
         if not isinstance(name, str):
-            raise TypeError
+            raise TypeError("Name must be string")
 
         if not isinstance(damage, int):
-            raise TypeError
+            raise TypeError("Damage must be integer")
 
         self.name = name
         self.__damage = damage
@@ -16,16 +16,16 @@ class Weapon:
 class Spell:
     def __init__(self, name, damage, mana_cost, cast_range):
         if not isinstance(name, str):
-            raise TypeError
+            raise TypeError("Name must be string")
 
         if not isinstance(damage, int):
-            raise TypeError
+            raise TypeError("Damage must be integer")
 
         if not isinstance(mana_cost, int):
-            raise TypeError
+            raise TypeError("Mana must be ingeter")
 
         if not isinstance(cast_range, int):
-            raise TypeError
+            raise TypeError("Cast_range must be ingeter")
 
         self.name = name
         self.__damage = damage
