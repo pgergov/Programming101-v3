@@ -16,6 +16,7 @@ class Hero(Soldier):
         self.name = name
         self.title = title
         self.mana_regeneration_rate = mana_regeneration_rate
+        self.__max_mana = mana
         self.damage = 0
 
     def __str__(self):
@@ -32,12 +33,3 @@ class Hero(Soldier):
 
     def known_as(self):
         return "{} the {}".format(self.name, self.title)
-
-    # Add regeneration if the hero moves
-    def take_mana(self, mana):
-        if not isinstance(mana, int):
-            raise TypeError("Enter valid mana_points.")
-        if self.mana + mana > self.__max_mana:
-            self.mana = self.__max_mana
-        else:
-            self.mana += mana

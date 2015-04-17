@@ -22,11 +22,3 @@ class Enemy(Soldier):
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
-
-    def take_mana(self, mana):
-        if not isinstance(mana, int):
-            raise TypeError("Enter valid mana_points.")
-        if self.mana + mana > self.__max_mana:
-            self.mana = self.__max_mana
-        else:
-            self.mana += mana
