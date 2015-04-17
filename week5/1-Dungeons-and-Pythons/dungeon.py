@@ -1,6 +1,7 @@
 from hero import Hero
 from enemy import Enemy
-from weapons_and_spells import Weapon
+from weapons_and_spells import Weapon, Spell
+import random
 
 
 class Dungeon:
@@ -10,6 +11,16 @@ class Dungeon:
         self.map = None
         self.hero = None
         self.enemy = None
+        self.treasure = {
+                   "heal_potion": [25, 50, 75, 100],
+                   "mana_potion": [25, 50, 75, 100],
+                   "weapon": [Weapon("Axe", damage=20),
+                              Weapon("Sword", damage=25),
+                              Weapon("Mace", damage=30)],
+                   "spell": [Spell("Frostbolt", 20, 30, cast_range=3),
+                             Spell("Fireball", 25, 40, cast_range=2),
+                             Spell("Arcanebolt", 30, 50, cast_range=2)],
+                   }
 
     def generate_map(self):
         with open(self.file, 'r') as f:
@@ -22,7 +33,6 @@ class Dungeon:
         for roll in self.map:
             print("".join(roll))
 
-    # Add spawn if our hero dies
     def spawn(self, hero_instance):
         if not isinstance(hero_instance, Hero):
             raise TypeError("The hero must be from class Hero")
@@ -47,30 +57,54 @@ class Dungeon:
 
     def move_to_next_field(self, x, y):
         if self.map[y][x] == "#":
-            return False  # Add what should happen in this case
+            return False
         elif self.map[y][x] == ".":
             self.map[y][x] = "H"
             return True
         elif self.map[y][x] == "E":
-            pass  # Add fight and return True or False
+            self.enemy = Enemy(100, 100, 20)
+            self.start_fight()
+            if self.hero.is_alive():
+                self.map[y][x] = "H"
+                return True
+            else:
+                print("GAME OVER")
+                return True
         elif self.map[y][x] == "T":
-            pass  # Add treasure and return True or False
+            self.pick_treasure()
+            self.map[y][x] = "H"
+            return True
+        elif self.map[y][x] == "G":
+            print("Your quest is complete! Good job!")
+            return True
+
+    def pick_treasure(self):
+        treasures = ["heal_potion", "mana_potion", "weapon", "spell"]
+        loot = random.choice(treasures)
+        if loot == "heal_potion":
+            heal = random.choice(self.treasure[loot])
+            self.hero.take_healing(heal)
+            print("Found health potion. Hero health is {}.".format(
+                self.hero.get_health()))
+        elif loot == "mana_potion":
+            mana = random.choice(self.treasure[loot])
+            self.hero.take_mana(mana)
+            print("Found mana potion. Hero mana is {}.".format(
+                self.hero.get_mana()))
+        elif loot == "weapon":
+            weapon = random.choice(self.treasure[loot])
+            self.hero.equip(weapon)
+            print("Found a weapon - {}.".format(weapon.name))
+        elif loot == "spell":
+            spell = random.choice(self.treasure[loot])
+            self.hero.learn(spell)
+            print("Learned a new spell: {}.".format(spell.name))
 
     def get_position(self):
         for y in range(len(self.map)):
             for x in range(len(self.map[y])):
                 if self.map[y][x] == "H":
                     return (y, x)
-
-    # def move_hero_to_direction(self, x, y):
-    #     if self.check_out_of_range(x, y):
-    #         if not self.move_to_next_field(x, y):
-    #             return False
-    #         self.map[y][x] = "."
-    #     else:
-    #         return False
-
-# Refactor move_hero, use the upper function etc.
 
     def move_hero(self, direction):
         position = self.get_position()
@@ -104,25 +138,42 @@ class Dungeon:
                 self.map[y][x] = "."
             else:
                 return False
+        self.hero.take_mana(self.hero.mana_regeneration_rate)
         return True
 
-    def fight(self):
-        self.hero = Hero("Ahri", "Kingslayer", 100, 100, 2)
-        self.enemy = Enemy(100, 100, 20)
-        w = Weapon("The Axe of Destiny", damage=20)
-        self.hero.equip(w)
+    def determine_damage_source(self):
+        if self.hero.has_spell() and self.hero.has_weapon():
+            if self.hero.spell.get_damage() >= self.hero.weapon.get_damage():
+                if self.hero.get_mana() >= self.hero.spell.get_mana_cost():
+                    return "spell"
+            return "weapon"
+        elif self.hero.has_spell():
+            if self.hero.get_mana() >= self.hero.spell.get_mana_cost():
+                return "spell"
+        elif self.hero.has_weapon():
+            return "weapon"
+
+    def start_fight(self):
         print("A fight was started between our {} and {}".format(
             repr(self.hero), repr(self.enemy)))
         while True:
-            self.enemy.take_damage(self.hero.attack(by="weapon"))
-            print("Hero hits with {} for {} dmg. Enemy health is {}".format(w.name, w.get_damage(), self.enemy.get_health()))
+            if self.determine_damage_source() is not None:
+                if self.determine_damage_source() == "spell":
+                    self.enemy.take_damage(self.hero.attack(by="magic"))
+                    print("Hero casts a {}, hits enemy for {} dmg. Enemy health\
+ is {}".format(self.hero.spell.name, self.hero.spell.get_damage(
+                         ), self.enemy.get_health()))
+                elif self.determine_damage_source() == "weapon":
+                    self.enemy.take_damage(self.hero.attack(by="weapon"))
+                    print("Hero hits enemy with {} for {} dmg. Enemy health\
+ is {}".format(self.hero.weapon.name, self.hero.weapon.get_damage(
+                         ), self.enemy.get_health()))
             if not self.enemy.is_alive():
                 print("Enemy is dead!")
                 break
             self.hero.take_damage(self.enemy.attack(by="weapon"))
-            print("Enemy hits hero for {} dmg. Hero health is {}".format(self.enemy.damage, self.hero.get_health()))
+            print("Enemy hits hero for {} dmg. Hero health is {}".format(
+                self.enemy.damage, self.hero.get_health()))
             if not self.hero.is_alive():
                 print("Hero is dead!")
                 break
-d = Dungeon("level1.txt")
-d.fight()

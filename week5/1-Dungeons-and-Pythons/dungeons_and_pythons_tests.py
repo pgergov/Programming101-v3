@@ -105,7 +105,25 @@ class HeroTests(unittest.TestCase):
         # dungeon.print_map()
         self.assertTrue(dungeon.move_hero("down"))
 
+    def test_the_game(self):
+        h = Hero(name="Bron", title="Dragonslayer",
+                 health=100, mana=100, mana_regeneration_rate=2)
+        w = Weapon(name="The Axe of Destiny", damage=20)
+        h.equip(w)
+        s = Spell(name="Lightning bolt", damage=30, mana_cost=50, cast_range=2)
+        h.learn(s)
+        dungeon = Dungeon("level1.txt")
+        dungeon.generate_map()
+        dungeon.spawn(h)
+        dungeon.move_hero("right")
+        dungeon.move_hero("down")
+        dungeon.move_hero("down")
+        dungeon.move_hero("down")
+        dungeon.move_hero("right")
+        dungeon.move_hero("right")
 
+        dungeon.print_map()
+        print(h.get_mana())
 
 if __name__ == '__main__':
     unittest.main()
