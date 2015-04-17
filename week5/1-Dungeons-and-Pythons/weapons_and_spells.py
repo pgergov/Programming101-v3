@@ -9,6 +9,9 @@ class Weapon:
         self.name = name
         self.__damage = damage
 
+    def __repr__(self):
+        return "{} - {} DMG".format(self.name, self.__damage)
+
     def get_damage(self):
         return self.__damage
 
@@ -31,6 +34,10 @@ class Spell:
         self.__damage = damage
         self.__mana_cost = mana_cost
         self.__cast_range = cast_range
+
+    def __repr__(self):
+        return "{} - {} DMG {} mana".format(
+            self.name, self.__damage, self.__mana_cost)
 
     def get_damage(self):
         return self.__damage
