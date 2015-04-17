@@ -11,7 +11,7 @@ class Enemy(Soldier):
         self.damage = damage
 
     def __str__(self):
-        return "Enemy(hp:{}, mana:{}, damage:{}".format(
+        return "Enemy(hp:{}, mana:{}, damage:{})".format(
             self.health, self.mana, self.damage)
 
     def __hash__(self):
