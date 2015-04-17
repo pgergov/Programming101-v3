@@ -40,6 +40,14 @@ class Soldier:
         else:
             self.health -= damage
 
+    def take_mana(self, mana):
+        if not isinstance(mana, int):
+            raise TypeError("Enter valid mana_points.")
+        if self.mana + mana > self.__max_mana:
+            self.mana = self.__max_mana
+        else:
+            self.mana += mana
+
     def take_healing(self, heal):
         if not self.is_alive():
             return False
@@ -51,19 +59,17 @@ class Soldier:
             self.health += heal
         return True
 
-    def take_mana(self, mana):
-        if not isinstance(mana, int):
-            raise TypeError("Enter valid mana_points.")
-        if self.mana + mana > self.__max_mana:
-            self.mana = self.__max_mana
-        else:
-            self.mana += mana
-
     def equip(self, weapon):
         self.weapon = weapon
 
     def learn(self, spell):
         self.spell = spell
+
+    def has_weapon(self):
+        return self.weapon is not None
+
+    def has_spell(self):
+        return self.spell is not None
 
     def attack(self, by=""):
         if by not in ["weapon", "magic"]:
@@ -74,6 +80,7 @@ class Soldier:
         elif by == "magic":
             if self.spell is not None:
                 if self.can_cast():
+                    self.mana -= self.spell.get_mana_cost()
                     return self.spell.get_damage()
                 raise Exception("Not enough mana.")
         return self.damage
