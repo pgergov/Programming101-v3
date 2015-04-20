@@ -13,7 +13,7 @@ class HeroTests(unittest.TestCase):
         self.dungeon.generate_map()
         self.weapon = Weapon("The Axe of Destiny", damage=20)
         self.spell = Spell(
-            name="Fireball", damage=30, mana_cost=50, cast_range=2)
+            name="Fireball", damage=30, mana_cost=50, cast_range=1)
 
     def test_known_as(self):
         self.assertEqual(self.hero.known_as(), "Ahri the Kingslayer")
@@ -117,13 +117,16 @@ class HeroTests(unittest.TestCase):
         dungeon.spawn(h)
         dungeon.move_hero("right")
         dungeon.move_hero("down")
+        dungeon.try_range_attack()
         dungeon.move_hero("down")
         dungeon.move_hero("down")
-        dungeon.move_hero("right")
-        dungeon.move_hero("right")
+        dungeon.try_range_attack()
+        # dungeon.move_hero("right")
+        # dungeon.move_hero("right")
 
         dungeon.print_map()
-        print(h.get_mana())
+        # print(h.get_mana())
+
 
 if __name__ == '__main__':
     unittest.main()

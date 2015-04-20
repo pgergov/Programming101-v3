@@ -21,6 +21,7 @@ class Dungeon:
                              Spell("Fireball", 25, 40, cast_range=2),
                              Spell("Arcanebolt", 30, 50, cast_range=2)],
                    }
+        # self.generate_map()
 
     def generate_map(self):
         with open(self.file, 'r') as f:
@@ -153,8 +154,113 @@ class Dungeon:
         elif self.hero.has_weapon():
             return "weapon"
 
+    def check_left(self):
+        position = self.get_position()
+        x = position[1]
+        y = position[0]
+        can_pass_freely = True
+        for i in range(1, self.hero.spell.get_cast_range() + 1):
+            if can_pass_freely:
+                if self.map[y][x - i] == "E":
+                    return (y, x)
+            if self.map[y][x - i] != ".":
+                can_pass_freely = False
+
+    def check_right(self):
+        position = self.get_position()
+        x = position[1]
+        y = position[0]
+        can_pass_freely = True
+        for i in range(1, self.hero.spell.get_cast_range() + 1):
+            if can_pass_freely:
+                if self.map[y][x + i] == "E":
+                    return (y, x + i)
+            if self.map[y][x + i] != ".":
+                can_pass_freely = False
+
+    def check_up(self):
+        position = self.get_position()
+        x = position[1]
+        y = position[0]
+        can_pass_freely = True
+        for i in range(1, self.hero.spell.get_cast_range() + 1):
+            if can_pass_freely:
+                if self.map[y - i][x] == "E":
+                    return (y - i, x)
+            if self.map[y - i][x] != ".":
+                can_pass_freely = False
+
+    def check_down(self):
+        position = self.get_position()
+        x = position[1]
+        y = position[0]
+        can_pass_freely = True
+        for i in range(1, self.hero.spell.get_cast_range() + 1):
+            if can_pass_freely:
+                if self.map[y + i][x] == "E":
+                    return (y + i, x)
+            try:
+                if self.map[y + i][x] != ".":
+                    can_pass_freely = False
+            except:
+                pass
+
+    def try_range_attack(self):
+        position = self.get_position()
+        x = position[1]
+        y = position[0]
+        if self.check_right() is not None:
+            self.enemy = Enemy(100, 100, 20)
+            self.range_fight(self.check_right(), "left")
+            if self.hero.is_alive():
+                self.map[y][x] = "H"
+        elif self.check_left() is not None:
+            self.enemy = Enemy(100, 100, 20)
+            self.range_fight(self.check_right(), "right")
+            if self.hero.is_alive():
+                self.map[y][x] = "H"
+        elif self.check_down() is not None:
+            self.enemy = Enemy(100, 100, 20)
+            self.range_fight(self.check_right(), "up")
+            if self.hero.is_alive():
+                self.map[y][x] = "H"
+        elif self.check_up() is not None:
+            self.enemy = Enemy(100, 100, 20)
+            self.range_fight(self.check_right(), "down")
+            if self.hero.is_alive():
+                self.map[y][x] = "H"
+        else:
+            print("No enemy in casting range!")
+
+    def move_enemy(self, current_position, direction):
+        self.map[current_position[0]][current_position[1]] = "."
+        if direction == "right":
+            self.map[current_position[0]][current_position[1] + 1] = "E"
+            return (current_position[0], current_position[1] + 1)
+        if direction == "left":
+            self.map[current_position[0]][current_position[1] - 1] = "E"
+            return (current_position[0], current_position[1] - 1)
+        if direction == "up":
+            self.map[current_position[0] - 1][current_position[1]] = "E"
+            return (current_position[0] - 1, current_position[1])
+        if direction == "down":
+            self.map[current_position[0] + 1][current_position[1]] = "E"
+            return (current_position[0] + 1, current_position[1])
+
+    def range_fight(self, enemy_position, enemy_moving_direction):
+        print("A range fight was started between our {} and {}".format(
+            repr(self.hero), repr(self.enemy)))
+        while self.get_position() is not None:
+            self.enemy.take_damage(self.hero.attack(by="magic"))
+            print("Hero casts a {}, hits enemy for {} dmg. Enemy health\
+ is {}".format(self.hero.spell.name, self.hero.spell.get_damage(
+                         ), self.enemy.get_health()))
+            enemy_position = self.move_enemy(enemy_position, enemy_moving_direction)
+            print("Enemy moved one square towards Hero.")
+        self.start_fight()
+
     def start_fight(self):
-        print("A fight was started between our {} and {}".format(
+        print("A melee fight was started between our {} and {}".format(
             repr(self.hero), repr(self.enemy)))
         while True:
             if self.determine_damage_source() is not None:
