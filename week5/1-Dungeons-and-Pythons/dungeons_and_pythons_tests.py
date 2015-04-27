@@ -10,7 +10,6 @@ class HeroTests(unittest.TestCase):
         self.hero = Hero("Ahri", "Kingslayer", 100, 100, 2)
         self.enemy = Enemy(100, 100, 20)
         self.dungeon = Dungeon("level1.txt")
-        self.dungeon.generate_map()
         self.weapon = Weapon("The Axe of Destiny", damage=20)
         self.spell = Spell(
             name="Fireball", damage=30, mana_cost=50, cast_range=1)
@@ -59,7 +58,6 @@ class HeroTests(unittest.TestCase):
         self.assertEqual(self.hero.attack(by="magic"), 30)
 
     def test_dungeon_map(self):
-        self.dungeon.generate_map()
         self.assertEqual(self.dungeon.map, [['S', '.', '#', '#', '.', '.', '.', '.', '.', 'T'], ['#', 'T', '#', '#', '.', '.', '#', '#', '#', '.'], ['#', '.', '#', '#', '#', 'E', '#', '#', '#', 'E'], ['#', '.', 'E', '.', '.', '.', '#', '#', '#', '.'], ['#', '#', '#', 'T', '#', '#', '#', '#', '#', 'G']])
         # self.dungeon.print_map()
 
@@ -95,7 +93,6 @@ class HeroTests(unittest.TestCase):
 
     def test_moving_around_the_map(self):
         dungeon = Dungeon("level2.txt")
-        dungeon.generate_map()
         dungeon.spawn(self.hero)
         dungeon.move_hero("right")
         dungeon.move_hero("down")
@@ -113,7 +110,6 @@ class HeroTests(unittest.TestCase):
         s = Spell(name="Lightning bolt", damage=30, mana_cost=50, cast_range=2)
         h.learn(s)
         dungeon = Dungeon("level1.txt")
-        dungeon.generate_map()
         dungeon.spawn(h)
         dungeon.move_hero("right")
         dungeon.move_hero("down")

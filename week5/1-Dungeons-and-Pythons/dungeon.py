@@ -21,7 +21,14 @@ class Dungeon:
                              Spell("Fireball", 25, 40, cast_range=2),
                              Spell("Arcanebolt", 30, 50, cast_range=2)],
                    }
-        # self.generate_map()
+        self.generate_map()
+
+    directions = {
+                    "left": (-1, 0),
+                    "right": (1, 0),
+                    "up": (0, -1),
+                    "down": (0, +1),
+                 }
 
     def generate_map(self):
         with open(self.file, 'r') as f:
@@ -66,11 +73,11 @@ class Dungeon:
             self.enemy = Enemy(100, 100, 20)
             self.start_fight()
             if self.hero.is_alive():
-                self.map[y][x] = "H"
                 return True
             else:
-                print("GAME OVER")
-                return True
+                if not self.spawn(self.hero):
+                    print("GAME OVER")
+                    return True
         elif self.map[y][x] == "T":
             self.pick_treasure()
             self.map[y][x] = "H"
@@ -108,37 +115,20 @@ class Dungeon:
                     return (y, x)
 
     def move_hero(self, direction):
-        position = self.get_position()
-        x = position[1]
-        y = position[0]
-        if direction == "right":
-            if self.check_out_of_range(x + 1, y):
-                if not self.move_to_next_field(x + 1, y):
+        if not self.hero.is_alive():
+            raise Exception("You can't move! Get a hero first.")
+        y, x = self.get_position()
+        for move_direction in ["left", "right", "up", "down"]:
+            if direction == move_direction:
+                dx, dy = self.directions[direction]
+                new_x = x + dx
+                new_y = y + dy
+                if self.check_out_of_range(new_x, new_y):
+                    if not self.move_to_next_field(new_x, new_y):
+                        return False
+                    self.map[y][x] = "."
+                else:
                     return False
-                self.map[y][x] = "."
-            else:
-                return False
-        if direction == "left":
-            if self.check_out_of_range(x - 1, y):
-                if not self.move_to_next_field(x - 1, y):
-                    return False
-                self.map[y][x] = "."
-            else:
-                return False
-        if direction == "up":
-            if self.check_out_of_range(x, y - 1):
-                if not self.move_to_next_field(x, y - 1):
-                    return False
-                self.map[y][x] = "."
-            else:
-                return False
-        if direction == "down":
-            if self.check_out_of_range(x, y + 1):
-                if not self.move_to_next_field(x, y + 1):
-                    return False
-                self.map[y][x] = "."
-            else:
-                return False
         self.hero.take_mana(self.hero.mana_regeneration_rate)
         return True
 
@@ -154,98 +144,53 @@ class Dungeon:
         elif self.hero.has_weapon():
             return "weapon"
 
-    def check_left(self):
-        position = self.get_position()
-        x = position[1]
-        y = position[0]
+    directions = {
+                    "left": (-1, 0),
+                    "right": (1, 0),
+                    "up": (0, -1),
+                    "down": (0, +1),
+                 }
+
+    def check_range_attack(self, direction):
+        y, x = self.get_position()
+        dx, dy = self.directions[direction]
+        x += dx
+        y += dy
         can_pass_freely = True
         for i in range(1, self.hero.spell.get_cast_range() + 1):
             if can_pass_freely:
-                if self.map[y][x - i] == "E":
+                if self.map[y][x] == "E":
                     return (y, x)
             if self.map[y][x - i] != ".":
                 can_pass_freely = False
 
-    def check_right(self):
-        position = self.get_position()
-        x = position[1]
-        y = position[0]
-        can_pass_freely = True
-        for i in range(1, self.hero.spell.get_cast_range() + 1):
-            if can_pass_freely:
-                if self.map[y][x + i] == "E":
-                    return (y, x + i)
-            if self.map[y][x + i] != ".":
-                can_pass_freely = False
-
-    def check_up(self):
-        position = self.get_position()
-        x = position[1]
-        y = position[0]
-        can_pass_freely = True
-        for i in range(1, self.hero.spell.get_cast_range() + 1):
-            if can_pass_freely:
-                if self.map[y - i][x] == "E":
-                    return (y - i, x)
-            if self.map[y - i][x] != ".":
-                can_pass_freely = False
-
-    def check_down(self):
-        position = self.get_position()
-        x = position[1]
-        y = position[0]
-        can_pass_freely = True
-        for i in range(1, self.hero.spell.get_cast_range() + 1):
-            if can_pass_freely:
-                if self.map[y + i][x] == "E":
-                    return (y + i, x)
-            try:
-                if self.map[y + i][x] != ".":
-                    can_pass_freely = False
-            except:
-                pass
-
     def try_range_attack(self):
-        position = self.get_position()
-        x = position[1]
-        y = position[0]
-        if self.check_right() is not None:
-            self.enemy = Enemy(100, 100, 20)
-            self.range_fight(self.check_right(), "left")
+        y, x = self.get_position()
+        for i in ["left", "right", "up", "down"]:
+            if self.check_range_attack("right") is not None:
+                self.enemy = Enemy(100, 100, 20)
+                self.range_fight(self.check_range_attack("right"), i)
             if self.hero.is_alive():
                 self.map[y][x] = "H"
-        elif self.check_left() is not None:
-            self.enemy = Enemy(100, 100, 20)
-            self.range_fight(self.check_right(), "right")
-            if self.hero.is_alive():
-                self.map[y][x] = "H"
-        elif self.check_down() is not None:
-            self.enemy = Enemy(100, 100, 20)
-            self.range_fight(self.check_right(), "up")
-            if self.hero.is_alive():
-                self.map[y][x] = "H"
-        elif self.check_up() is not None:
-            self.enemy = Enemy(100, 100, 20)
-            self.range_fight(self.check_right(), "down")
-            if self.hero.is_alive():
-                self.map[y][x] = "H"
+            else:
+                self.map[y][x] = "."
         else:
             print("No enemy in casting range!")
 
-    def move_enemy(self, current_position, direction):
-        self.map[current_position[0]][current_position[1]] = "."
+    def move_enemy(self, ID, direction):
+        self.map[ID[0]][ID[1]] = "."
         if direction == "right":
-            self.map[current_position[0]][current_position[1] + 1] = "E"
-            return (current_position[0], current_position[1] + 1)
+            self.map[ID[0]][ID[1] + 1] = "E"
+            return (ID[0], ID[1] + 1)
         if direction == "left":
-            self.map[current_position[0]][current_position[1] - 1] = "E"
-            return (current_position[0], current_position[1] - 1)
+            self.map[ID[0]][ID[1] - 1] = "E"
+            return (ID[0], ID[1] - 1)
         if direction == "up":
-            self.map[current_position[0] - 1][current_position[1]] = "E"
-            return (current_position[0] - 1, current_position[1])
+            self.map[ID[0] - 1][ID[1]] = "E"
+            return (ID[0] - 1, ID[1])
         if direction == "down":
-            self.map[current_position[0] + 1][current_position[1]] = "E"
-            return (current_position[0] + 1, current_position[1])
+            self.map[ID[0] + 1][ID[1]] = "E"
+            return (ID[0] + 1, ID[1])
 
     def range_fight(self, enemy_position, enemy_moving_direction):
         print("A range fight was started between our {} and {}".format(
@@ -281,5 +226,7 @@ class Dungeon:
             print("Enemy hits hero for {} dmg. Hero health is {}".format(
                 self.enemy.damage, self.hero.get_health()))
             if not self.hero.is_alive():
+                y, x = self.get_position()
+                self.map[y][x] = "."
                 print("Hero is dead!")
                 break
