@@ -1,0 +1,29 @@
+
+    <div class="container theme-showcase" role="main">
+      <div class="page-header">
+        <h1>Movies</h1>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-stripped">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Rating</th>
+                <th>Length</th>
+              </tr>
+            </thead>
+            <tbody>
+             {% for obj in movies_list %}
+              <tr>
+                <td>{{ obj.name }}</td>
+                <td>{{ obj.rating }}</td>
+                <td>{{ obj.length }}</td>
+              </tr>
+	      {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+

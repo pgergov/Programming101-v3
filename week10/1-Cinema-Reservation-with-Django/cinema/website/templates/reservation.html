@@ -1,0 +1,12 @@
+<div class="col-sm-4">
+    {% for movie, res_all in movies.items %}
+  <div class="list-group">
+    <a href="#" class="list-group-item active">
+	    {{movie}}
+    </a>
+    {% for res in res_all %}
+    <a href="/get_reserv?movie_id= {{ movie.id }}&proj_id= {{ res.id }}"  class="list-group-item">{{ res }}</a>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div><!-- /.col-sm-4 --
