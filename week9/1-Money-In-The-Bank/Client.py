@@ -1,4 +1,13 @@
-class Client():
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String
+from sqlalchemy import create_engine
+
+
+
+Base = declarative_base()
+
+
+class Client(Base):
     def __init__(self, id, username, balance, message):
         self.__username = username
         self.__balance = balance
